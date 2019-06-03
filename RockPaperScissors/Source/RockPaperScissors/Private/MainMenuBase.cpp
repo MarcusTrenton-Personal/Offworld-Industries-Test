@@ -3,11 +3,14 @@
 
 #include "MainMenuBase.h"
 #include "Engine.h"
+#include "Constants.h"
+#include "Util.h"
 
-void UMainMenuBase::PlayGame()
+void UMainMenuBase::SendWeaponChoice(EWeapon playerWeapon)
 {
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Some debug message!"));
+		FString playerWeaponString = Util::EnumToString(FString("EWeapon"), playerWeapon, FString("Unknown"));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString("You picked ") + playerWeaponString);
 	}
 }

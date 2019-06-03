@@ -6,14 +6,11 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuBase.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ROCKPAPERSCISSORS_API UMainMenuBase : public UUserWidget
 {
 	GENERATED_BODY()
 
-	UFUNCTION(BlueprintCallable, Category = "MainMenu")
-	void PlayGame();
+		UFUNCTION(BlueprintCallable, Category = "MainMenu")
+		void SendWeaponChoice(EWeapon playerWeapon);
 };
