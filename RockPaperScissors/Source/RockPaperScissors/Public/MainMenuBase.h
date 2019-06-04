@@ -11,9 +11,10 @@ class ROCKPAPERSCISSORS_API UMainMenuBase : public UUserWidget
 {
 	GENERATED_BODY()
 
-		UFUNCTION(BlueprintCallable, Category = "MainMenu")
-		void SendWeaponChoice(const EWeapon playerWeapon);
+public:
+	UFUNCTION(BlueprintCallable, Category = "MainMenu")
+	void SendWeaponChoice(const EWeapon playerWeapon);
 
-		UFUNCTION(BlueprintPure, Category = "MainMenu")
-		bool IsValidBet(const FString text) const;
+	UFUNCTION(BlueprintPure, Category = "MainMenu")
+	bool IsValidBet(const FString text) const;
 };
