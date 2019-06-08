@@ -31,6 +31,8 @@ void ARockPaperScissorsPlayerController::BeginPlay()
 
 void ARockPaperScissorsPlayerController::SendPlayerHand(EWeapon EPlayerWeapon, int32 Bet)
 {
+	UE_LOG(LogTemp, Warning, TEXT("In SendPlayerHand"));
+
 	if (GEngine)
 	{
 		//const FString playerWeaponString = Util::EnumToString(FString("EWeapon"), EPlayerWeapon, FString("Unknown"));
