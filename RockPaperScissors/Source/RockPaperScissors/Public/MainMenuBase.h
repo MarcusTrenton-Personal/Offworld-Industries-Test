@@ -13,8 +13,8 @@ class ROCKPAPERSCISSORS_API UMainMenuBase : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MainMenu")
-	void SendWeaponChoice(const EWeapon playerWeapon);
+	void SendHand(const EWeapon EPlayerWeapon, const int32 BetAmount);
 
 	UFUNCTION(BlueprintPure, Category = "MainMenu")
-	bool IsValidBet(const FString text) const;
+	bool IsValidBet(const FString Text) const;
 };

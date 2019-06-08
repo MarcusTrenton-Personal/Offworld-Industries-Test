@@ -42,7 +42,7 @@ public:
 			expanded.ReplaceInline(*search, *spaceNumber, ESearchCase::CaseSensitive);
 		}
 		expanded.ReplaceInline(TEXT("_"), TEXT(" -"), ESearchCase::CaseSensitive);
-		expanded = expanded.RightChop(1).Trim().TrimEnd();
+		expanded = expanded.RightChop(1).TrimStart().TrimEnd();
 		return expanded;
 	}
 };

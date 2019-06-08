@@ -4,7 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Constants.h"
+#include "Blueprint/UserWidget.h"
+#include "RockPaperScissorsEvents.h"
 #include "RockPaperScissorsPlayerController.generated.h"
+
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHandDelegate, FRockPaperScissorsHandEventParams, EventParams);
 
 /** PlayerController class used to enable cursor */
 UCLASS()
@@ -14,6 +19,14 @@ class ARockPaperScissorsPlayerController : public APlayerController
 
 public:
 	ARockPaperScissorsPlayerController();
+
+	virtual void BeginPlay() override;
+
+	//UFUNCTION(BlueprintAssignable, Category = "RPSPlayerController")
+	//FHandDelegate OnHandDelegate;
+
+	UFUNCTION()
+	void SendPlayerHand(EWeapon EPlayerWeapon, int32 Bet);
 };
 
 
