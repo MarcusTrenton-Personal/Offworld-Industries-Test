@@ -31,11 +31,12 @@ void ARockPaperScissorsPlayerController::BeginPlay()
 
 void ARockPaperScissorsPlayerController::SendPlayerHand(EWeapon EPlayerWeapon, int32 Bet)
 {
-	UE_LOG(LogTemp, Warning, TEXT("In SendPlayerHand"));
+	const FString PlayerWeaponString = Util::EnumToString(FString("EWeapon"), EPlayerWeapon, FString("Unknown"));
+	UE_LOG(LogTemp, Log, TEXT("Received SendPlayerHand %s of bet %i"), *PlayerWeaponString, Bet);
 
 	if (GEngine)
 	{
-		//const FString playerWeaponString = Util::EnumToString(FString("EWeapon"), EPlayerWeapon, FString("Unknown"));
+		
 		const FString playerWeaponString = "Test";
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString("Player picked ") + playerWeaponString);
 	}
