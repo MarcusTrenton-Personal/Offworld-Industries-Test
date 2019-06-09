@@ -8,10 +8,8 @@
 #include "Runtime/Core/Public/Misc/DefaultValueHelper.h"
 
 
-bool UMainMenuBase::IsValidBet(const FString text) const
+bool UMainMenuBase::IsValidBet(const int32 Bet, const int32 Money) const
 {
-	int32 intValue = 0;
-	const bool isInteger = FDefaultValueHelper::ParseInt(text, intValue);
-	const bool isValid = isInteger && intValue > 0;
-	return isValid;
+	const bool IsValid = Bet > 0 && Bet <= Money;
+	return IsValid;
 }

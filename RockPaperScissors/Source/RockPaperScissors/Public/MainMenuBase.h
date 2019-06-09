@@ -14,5 +14,5 @@ class ROCKPAPERSCISSORS_API UMainMenuBase : public UUserWidget
 public:
 
 	UFUNCTION(BlueprintPure, Category = "MainMenu")
-	bool IsValidBet(const FString Text) const;
+	bool IsValidBet(const int32 Bet, const int32 Money) const;
 };

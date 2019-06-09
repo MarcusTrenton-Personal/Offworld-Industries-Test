@@ -34,4 +34,6 @@ void ARockPaperScissorsPlayerController::SendPlayerHand(const EWeapon EPlayerWea
 		const FString playerWeaponString = "Test";
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString("Player picked ") + playerWeaponString);
 	}
+
+	//TODO: Get Money from custom PlayerState and send off new event with PlayerId to the GameMode.
 }
