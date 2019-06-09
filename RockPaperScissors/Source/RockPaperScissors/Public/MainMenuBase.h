@@ -12,8 +12,6 @@ class ROCKPAPERSCISSORS_API UMainMenuBase : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "MainMenu")
-	void SendHand(const EWeapon EPlayerWeapon, const int32 BetAmount);
 
 	UFUNCTION(BlueprintPure, Category = "MainMenu")
 	bool IsValidBet(const FString Text) const;

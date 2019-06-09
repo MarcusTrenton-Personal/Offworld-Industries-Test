@@ -26,7 +26,7 @@ public:
 	//FHandDelegate OnHandDelegate;
 
 	UFUNCTION()
-	void SendPlayerHand(EWeapon EPlayerWeapon, int32 Bet);
+	void SendPlayerHand(const EWeapon EPlayerWeapon, const int32 Bet);
 };
 
 
