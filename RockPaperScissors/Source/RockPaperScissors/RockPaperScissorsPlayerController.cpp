@@ -19,7 +19,8 @@ void ARockPaperScissorsPlayerController::BeginPlay()
 	URockPaperScissorsGameInstance* GameInstance = Cast<URockPaperScissorsGameInstance>(GetGameInstance());
 	if (GameInstance && GameInstance->GlobalEventHandler)
 	{
-		GameInstance->GlobalEventHandler->OnMainMenuHandSelected.AddDynamic(this, &ARockPaperScissorsPlayerController::SendPlayerHand);
+		GameInstance->GlobalEventHandler->OnMainMenuHandSelected.AddDynamic(	this, &ARockPaperScissorsPlayerController::SendPlayerHand);
+		GameInstance->GlobalEventHandler->OnGameResult.AddDynamic(				this, &ARockPaperScissorsPlayerController::OnGameResult);
 	}
 }
 
@@ -30,14 +31,37 @@ void ARockPaperScissorsPlayerController::SendPlayerHand(const EWeapon EPlayerWea
 	{
 		int32 Money = RPSPlayerState->Money;
 		int32 GamesPlayedCount = RPSPlayerState->GamesPlayedCount;
-		int32 ControllerId = GetLocalPlayer()->GetControllerId(); //This is a stuipd way to get it, but the API doesn't show another//GetPlayerControllerId();
-		UE_LOG(LogTemp, Log, TEXT("PlayerState Money %i GamesPlayerCount %i Player Controller "), Money, GamesPlayedCount, ControllerId);
+		int32 ControllerId = GetId();
 
 		URockPaperScissorsGameInstance* GameInstance = Cast<URockPaperScissorsGameInstance>(GetGameInstance());
 		if (GameInstance && GameInstance->GlobalEventHandler)
 		{
 			GameInstance->GlobalEventHandler->OnPlayerHandSelected.Broadcast(ControllerId, EPlayerWeapon, Bet, Money, GamesPlayedCount);
-			UE_LOG(LogTemp, Warning, TEXT("Sent Player Hand"));
 		}
 	}
+}
+
+void ARockPaperScissorsPlayerController::OnGameResult(
+	const int32 PlayerControllerId,
+	const int32 GameIndex,
+	const EGameResult EResult,
+	const int32 Money,
+	const EWeapon EEnemyWeapon)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Received game result"));
+	int32 ControllerId = GetId();
+	if (ControllerId == PlayerControllerId)
+	{
+		ARockPaperScissorsPlayerState* RPSPlayerState = GetPlayerState<ARockPaperScissorsPlayerState>();
+		if (RPSPlayerState)
+		{
+			RPSPlayerState->Money = Money;
+			RPSPlayerState->GamesPlayedCount = GameIndex + 1;
+		}
+	}
+}
+
+int32 ARockPaperScissorsPlayerController::GetId() const
+{
+	return GetLocalPlayer()->GetControllerId(); //This is a stupid way to get it, but the API doesn't show another
 }

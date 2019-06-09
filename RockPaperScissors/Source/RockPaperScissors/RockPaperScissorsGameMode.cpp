@@ -19,13 +19,11 @@ ARockPaperScissorsGameMode::ARockPaperScissorsGameMode()
 void ARockPaperScissorsGameMode::StartPlay()
 {
 	Super::StartPlay();
-	UE_LOG(LogTemp, Warning, TEXT("In StartPlay"));
 
 	URockPaperScissorsGameInstance* GameInstance = Cast<URockPaperScissorsGameInstance>(GetGameInstance());
 	if (GameInstance && GameInstance->GlobalEventHandler)
 	{
 		GameInstance->GlobalEventHandler->OnPlayerHandSelected.AddDynamic(this, &ARockPaperScissorsGameMode::StartPlayerGameRound);
-		UE_LOG(LogTemp, Warning, TEXT("Bound player hand event"));
 	}
 }
 
@@ -36,5 +34,14 @@ void ARockPaperScissorsGameMode::StartPlayerGameRound(
 	const int32 Money,
 	const int32 GamesPlayedCount)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Received player hand event"));
+	URockPaperScissorsGameInstance* GameInstance = Cast<URockPaperScissorsGameInstance>(GetGameInstance());
+	if (GameInstance && GameInstance->GlobalEventHandler)
+	{
+		//TODO: Add a delay before sending results. Simulate server lag.
+
+		//TODO: Have distinct AIs. Switch AI every few games. Let players know of AI switch.
+		const int32 NewMoney = Money - 1;
+		GameInstance->GlobalEventHandler->OnGameResult.Broadcast(PlayerControllerId, GamesPlayedCount, EGameResult::VE_Draw, NewMoney, EPlayerWeapon);
+		UE_LOG(LogTemp, Warning, TEXT("Sent Game result"));
+	}
 }

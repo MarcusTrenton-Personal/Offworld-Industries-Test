@@ -16,6 +16,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FPlayerControllerEventDelegate_OnH
 	int32, Money, 
 	int32, GamesPlayedCount);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FGameModeEventDelegate_OnGameResult,
+	int32, PlayerControllerId,
+	int32, GameIndex,
+	EGameResult, EResult,
+	int32, Money,
+	EWeapon, EEnemyWeapon);
+
 UCLASS(meta = (BlueprintSpawnableComponent), Category = "Global Events")
 class ROCKPAPERSCISSORS_API UGlobalEventHandler : public UActorComponent
 {
@@ -28,4 +35,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Global Events")
 	FPlayerControllerEventDelegate_OnHandSelected OnPlayerHandSelected;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Global Events")
+	FGameModeEventDelegate_OnGameResult OnGameResult;
 };

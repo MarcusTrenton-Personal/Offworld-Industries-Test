@@ -9,8 +9,6 @@
 #include "RockPaperScissorsEvents.h"
 #include "RockPaperScissorsPlayerController.generated.h"
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHandDelegate, FRockPaperScissorsHandEventParams, EventParams);
-
 /** PlayerController class used to enable cursor */
 UCLASS()
 class ARockPaperScissorsPlayerController : public APlayerController
@@ -22,11 +20,20 @@ public:
 
 	virtual void BeginPlay() override;
 
-	//UFUNCTION(BlueprintAssignable, Category = "RPSPlayerController")
-	//FHandDelegate OnHandDelegate;
+private:
 
 	UFUNCTION()
 	void SendPlayerHand(const EWeapon EPlayerWeapon, const int32 Bet);
+
+	UFUNCTION()
+	void OnGameResult(
+		const int32 PlayerControllerId,
+		const int32 GameNumber,
+		const EGameResult EResult,
+		const int32 Money,
+		const EWeapon EEnemyWeapon);
+
+	int32 GetId() const;
 };
 
 

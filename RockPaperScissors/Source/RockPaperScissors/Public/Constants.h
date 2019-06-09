@@ -12,3 +12,11 @@ enum class EWeapon : uint8
 	VE_Paper	UMETA(DisplayName = "Paper"),
 	VE_Scissors	UMETA(DisplayName = "Scissors")
 };
+
+UENUM(BlueprintType)
+enum class EGameResult : uint8
+{
+	VE_Loss	UMETA(DisplayName = "Loss"),
+	VE_Draw	UMETA(DisplayName = "Draw"),
+	VE_Win	UMETA(DisplayName = "Win")
+};
