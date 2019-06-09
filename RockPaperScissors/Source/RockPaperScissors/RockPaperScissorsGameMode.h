@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Constants.h"
 #include "GameFramework/GameModeBase.h"
 #include "RockPaperScissorsGameMode.generated.h"
 
@@ -14,6 +15,18 @@ class ARockPaperScissorsGameMode : public AGameModeBase
 
 public:
 	ARockPaperScissorsGameMode();
+
+	void StartPlay() override;
+
+private:
+
+	UFUNCTION()
+	void StartPlayerGameRound(
+		const int32 PlayerControllerId,
+		const EWeapon EPlayerWeapon,
+		const int32 Bet,
+		const int32 Money,
+		const int32 GamesPlayedCount);
 };
 
 

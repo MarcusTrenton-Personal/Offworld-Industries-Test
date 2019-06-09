@@ -15,12 +15,11 @@ class ROCKPAPERSCISSORS_API ARockPaperScissorsPlayerState : public APlayerState
 	GENERATED_BODY()
 	
 public:
-	//TODO: Make into a designer-tweakable variable
+	//TODO: Make into a designer-tweakable variable. Put in GameInstance contained object?
 	const int32 STARTING_MONEY = 100;
 
 	ARockPaperScissorsPlayerState();
 
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RPSPlayerState")
 	int32 Money;
 

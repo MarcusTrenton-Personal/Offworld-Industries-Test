@@ -1,9 +1,8 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "RockPaperScissorsPlayerController.h"
-#include "Engine.h" //For debug string only
-#include "Util.h" //For debug string only
 #include "RockPaperScissorsGameInstance.h"
+#include "RockPaperScissorsPlayerState.h"
 
 ARockPaperScissorsPlayerController::ARockPaperScissorsPlayerController()
 {
@@ -26,14 +25,19 @@ void ARockPaperScissorsPlayerController::BeginPlay()
 
 void ARockPaperScissorsPlayerController::SendPlayerHand(const EWeapon EPlayerWeapon, const int32 Bet)
 {
-	const FString PlayerWeaponString = Util::EnumToString(FString("EWeapon"), EPlayerWeapon, FString("Unknown"));
-	UE_LOG(LogTemp, Log, TEXT("Received SendPlayerHand %s of bet %i"), *PlayerWeaponString, Bet);
-
-	if (GEngine)
+	ARockPaperScissorsPlayerState* RPSPlayerState = GetPlayerState<ARockPaperScissorsPlayerState>();
+	if (RPSPlayerState)
 	{
-		const FString playerWeaponString = "Test";
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString("Player picked ") + playerWeaponString);
-	}
+		int32 Money = RPSPlayerState->Money;
+		int32 GamesPlayedCount = RPSPlayerState->GamesPlayedCount;
+		int32 ControllerId = GetLocalPlayer()->GetControllerId(); //This is a stuipd way to get it, but the API doesn't show another//GetPlayerControllerId();
+		UE_LOG(LogTemp, Log, TEXT("PlayerState Money %i GamesPlayerCount %i Player Controller "), Money, GamesPlayedCount, ControllerId);
 
-	//TODO: Get Money from custom PlayerState and send off new event with PlayerId to the GameMode.
+		URockPaperScissorsGameInstance* GameInstance = Cast<URockPaperScissorsGameInstance>(GetGameInstance());
+		if (GameInstance && GameInstance->GlobalEventHandler)
+		{
+			GameInstance->GlobalEventHandler->OnPlayerHandSelected.Broadcast(ControllerId, EPlayerWeapon, Bet, Money, GamesPlayedCount);
+			UE_LOG(LogTemp, Warning, TEXT("Sent Player Hand"));
+		}
+	}
 }
