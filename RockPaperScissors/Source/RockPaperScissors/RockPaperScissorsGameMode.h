@@ -20,6 +20,8 @@ public:
 
 private:
 
+	FRandomStream RandomGenerator;
+
 	UFUNCTION()
 	void StartPlayerGameRound(
 		const int32 PlayerControllerId,

@@ -48,7 +48,6 @@ void ARockPaperScissorsPlayerController::OnGameResult(
 	const int32 Money,
 	const EWeapon EEnemyWeapon)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Received game result"));
 	int32 ControllerId = GetId();
 	if (ControllerId == PlayerControllerId)
 	{

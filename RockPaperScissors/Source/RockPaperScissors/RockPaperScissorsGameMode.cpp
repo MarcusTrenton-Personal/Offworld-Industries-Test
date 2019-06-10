@@ -25,6 +25,8 @@ void ARockPaperScissorsGameMode::StartPlay()
 	{
 		GameInstance->GlobalEventHandler->OnPlayerHandSelected.AddDynamic(this, &ARockPaperScissorsGameMode::StartPlayerGameRound);
 	}
+
+	RandomGenerator.GenerateNewSeed();
 }
 
 void ARockPaperScissorsGameMode::StartPlayerGameRound(
@@ -62,16 +64,51 @@ void ARockPaperScissorsGameMode::StartPlayerGameRound(
 		const int32 NewMoney = Money + MoneyChange;
 
 		GameInstance->GlobalEventHandler->OnGameResult.Broadcast(PlayerControllerId, GamesPlayedCount, EResult, NewMoney, EEnemyWeapon);
-		UE_LOG(LogTemp, Warning, TEXT("Sent Game result"));
 	}
 }
 
 EWeapon ARockPaperScissorsGameMode::SelectEnemyWeapon() const
 {
-	return EWeapon::VE_Rock;
+	EWeapon EEnemyWeapon = EWeapon::VE_Rock;
+
+	const int32 RandomNumber = RandomGenerator.RandRange(0, 2);
+	switch (RandomNumber)
+	{
+	case 0:
+		EEnemyWeapon = EWeapon::VE_Rock;
+		break;
+
+	case 1:
+		EEnemyWeapon = EWeapon::VE_Paper;
+		break;
+
+	case 2:
+		EEnemyWeapon = EWeapon::VE_Scissors;
+		break;
+
+	default:
+		EEnemyWeapon = EWeapon::VE_Rock;
+	}
+
+	return EEnemyWeapon;
 }
 
 EGameResult ARockPaperScissorsGameMode::GetPlayerGameResult(EWeapon EPlayerWeapon, EWeapon EEnemyWeapon) const
 {
-	return EGameResult::VE_Loss;
+	//TODO: Reduce this check down to operator overload checks
+	EGameResult EResult = EGameResult::VE_Loss;
+
+	if (EPlayerWeapon == EEnemyWeapon)
+	{
+		EResult = EGameResult::VE_Draw;
+	}
+	//Only cases left to detect is Player win conditions. The rest are losses by default.
+	else if (	(EPlayerWeapon == EWeapon::VE_Rock &&		EEnemyWeapon == EWeapon::VE_Scissors) ||
+				(EPlayerWeapon == EWeapon::VE_Scissors &&	EEnemyWeapon == EWeapon::VE_Paper) ||
+				(EPlayerWeapon == EWeapon::VE_Paper &&		EEnemyWeapon == EWeapon::VE_Rock))
+	{
+		EResult = EGameResult::VE_Win;
+	}
+
+	return EResult;
 }
