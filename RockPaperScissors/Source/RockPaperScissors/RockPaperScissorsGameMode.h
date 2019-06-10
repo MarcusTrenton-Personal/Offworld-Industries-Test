@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Constants.h"
+#include "BartEnemy.h"
+#include "NashEnemy.h"
+#include "RockfordEnemy.h"
+#include <vector>
 #include "GameFramework/GameModeBase.h"
 #include "RockPaperScissorsGameMode.generated.h"
 
@@ -22,6 +26,12 @@ private:
 
 	FRandomStream RandomGenerator;
 
+	BartEnemy Bart;
+	NashEnemy Nash;
+	RockfordEnemy Rockford;
+
+	std::vector<IEnemy*> Enemies {&Bart, &Nash, &Rockford};
+
 	UFUNCTION()
 	void StartPlayerGameRound(
 		const int32 PlayerControllerId,
@@ -30,7 +40,7 @@ private:
 		const int32 Money,
 		const int32 GamesPlayedCount);
 
-	EWeapon SelectEnemyWeapon() const;
+	IEnemy* SelectEnemy() const;
 
 	EGameResult GetPlayerGameResult(EWeapon EPlayerWeapon, EWeapon EEnemyWeapon) const;
 };

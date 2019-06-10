@@ -43,8 +43,14 @@ void ARockPaperScissorsGameMode::StartPlayerGameRound(
 
 		//TODO: Have distinct AIs. Switch AI every few games. Let players know of AI switch.
 
-		const EWeapon EEnemyWeapon = SelectEnemyWeapon();
+		IEnemy* Enemy = SelectEnemy();
+		const EWeapon EEnemyWeapon = Enemy->SelectWeapon();
 		const EGameResult EResult = GetPlayerGameResult(EPlayerWeapon, EEnemyWeapon);
+		Enemy->ProcessGameResult(
+			PlayerControllerId,
+			EPlayerWeapon,
+			EEnemyWeapon,
+			EResult);
 
 		int32 MoneyChange = 0;
 		switch (EResult)
@@ -67,30 +73,16 @@ void ARockPaperScissorsGameMode::StartPlayerGameRound(
 	}
 }
 
-EWeapon ARockPaperScissorsGameMode::SelectEnemyWeapon() const
+IEnemy* ARockPaperScissorsGameMode::SelectEnemy() const
 {
-	EWeapon EEnemyWeapon = EWeapon::VE_Rock;
-
-	const int32 RandomNumber = RandomGenerator.RandRange(0, 2);
-	switch (RandomNumber)
+	IEnemy* Enemy = nullptr;
+	if (!Enemies.empty())
 	{
-	case 0:
-		EEnemyWeapon = EWeapon::VE_Rock;
-		break;
-
-	case 1:
-		EEnemyWeapon = EWeapon::VE_Paper;
-		break;
-
-	case 2:
-		EEnemyWeapon = EWeapon::VE_Scissors;
-		break;
-
-	default:
-		EEnemyWeapon = EWeapon::VE_Rock;
+		const int32 RandomIndex = RandomGenerator.RandRange(0, Enemies.size() - 1);
+		Enemy = Enemies[RandomIndex];
 	}
-
-	return EEnemyWeapon;
+	
+	return Enemy;
 }
 
 EGameResult ARockPaperScissorsGameMode::GetPlayerGameResult(EWeapon EPlayerWeapon, EWeapon EEnemyWeapon) const
