@@ -27,6 +27,10 @@ private:
 		const int32 Bet,
 		const int32 Money,
 		const int32 GamesPlayedCount);
+
+	EWeapon SelectEnemyWeapon() const;
+
+	EGameResult GetPlayerGameResult(EWeapon EPlayerWeapon, EWeapon EEnemyWeapon) const;
 };
 
 

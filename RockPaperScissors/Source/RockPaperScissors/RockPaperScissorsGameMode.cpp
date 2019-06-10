@@ -40,8 +40,38 @@ void ARockPaperScissorsGameMode::StartPlayerGameRound(
 		//TODO: Add a delay before sending results. Simulate server lag.
 
 		//TODO: Have distinct AIs. Switch AI every few games. Let players know of AI switch.
-		const int32 NewMoney = Money - 1;
-		GameInstance->GlobalEventHandler->OnGameResult.Broadcast(PlayerControllerId, GamesPlayedCount, EGameResult::VE_Draw, NewMoney, EPlayerWeapon);
+
+		const EWeapon EEnemyWeapon = SelectEnemyWeapon();
+		const EGameResult EResult = GetPlayerGameResult(EPlayerWeapon, EEnemyWeapon);
+
+		int32 MoneyChange = 0;
+		switch (EResult)
+		{
+		case EGameResult::VE_Loss :
+			MoneyChange = -Bet;
+			break;
+
+		case EGameResult::VE_Win :
+			MoneyChange = Bet;
+			break;
+
+		case EGameResult::VE_Draw : 
+		default :
+			MoneyChange = 0;
+		}
+		const int32 NewMoney = Money + MoneyChange;
+
+		GameInstance->GlobalEventHandler->OnGameResult.Broadcast(PlayerControllerId, GamesPlayedCount, EResult, NewMoney, EEnemyWeapon);
 		UE_LOG(LogTemp, Warning, TEXT("Sent Game result"));
 	}
+}
+
+EWeapon ARockPaperScissorsGameMode::SelectEnemyWeapon() const
+{
+	return EWeapon::VE_Rock;
+}
+
+EGameResult ARockPaperScissorsGameMode::GetPlayerGameResult(EWeapon EPlayerWeapon, EWeapon EEnemyWeapon) const
+{
+	return EGameResult::VE_Loss;
 }

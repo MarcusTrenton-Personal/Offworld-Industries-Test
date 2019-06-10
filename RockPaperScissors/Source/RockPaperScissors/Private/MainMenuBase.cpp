@@ -11,5 +11,6 @@
 bool UMainMenuBase::IsValidBet(const int32 Bet, const int32 Money) const
 {
 	const bool IsValid = Bet > 0 && Bet <= Money;
+	UE_LOG(LogTemp, Warning, TEXT("Bet %i Money %i IsValid %b"), Bet, Money, IsValid);
 	return IsValid;
 }

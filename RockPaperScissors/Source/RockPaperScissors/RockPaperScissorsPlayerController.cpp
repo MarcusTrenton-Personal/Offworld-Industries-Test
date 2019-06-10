@@ -57,6 +57,13 @@ void ARockPaperScissorsPlayerController::OnGameResult(
 		{
 			RPSPlayerState->Money = Money;
 			RPSPlayerState->GamesPlayedCount = GameIndex + 1;
+
+			//Now that the player state has been updated, it's safe to let the UI know.
+			URockPaperScissorsGameInstance* GameInstance = Cast<URockPaperScissorsGameInstance>(GetGameInstance());
+			if (GameInstance && GameInstance->GlobalEventHandler)
+			{
+				GameInstance->GlobalEventHandler->OnPostGameResult.Broadcast(PlayerControllerId, GameIndex, EResult, Money, EEnemyWeapon);
+			}
 		}
 	}
 }
