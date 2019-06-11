@@ -7,7 +7,9 @@
 #include "BartEnemy.h"
 #include "NashEnemy.h"
 #include "RockfordEnemy.h"
+#include "GlobalEventHandler.h"
 #include <vector>
+#include <map>
 #include "GameFramework/GameModeBase.h"
 #include "RockPaperScissorsGameMode.generated.h"
 
@@ -32,6 +34,16 @@ private:
 
 	std::vector<IEnemy*> Enemies {&Bart, &Nash, &Rockford};
 
+	const int32 ENEMY_HANDS_BEFORE_CHANGE = 5;
+
+	struct EnemyDuration
+	{
+		IEnemy* Enemy;
+		int32 RemainingHands;
+	};
+
+	std::map<int32, EnemyDuration> PlayerEnemyDurations;
+
 	UFUNCTION()
 	void StartPlayerGameRound(
 		const int32 PlayerControllerId,
@@ -41,8 +53,10 @@ private:
 		const int32 GamesPlayedCount);
 
 	IEnemy* SelectEnemy() const;
-
-	EGameResult GetPlayerGameResult(EWeapon EPlayerWeapon, EWeapon EEnemyWeapon) const;
+	EnemyDuration RefreshNewEnemy() const;
+	EGameResult GetPlayerGameResult(const EWeapon EPlayerWeapon, const EWeapon EEnemyWeapon) const;
+	int32 GetNewPlayerMoney(int32 Money, int32 Bet, EGameResult EResult);
+	void DecreaseEnemyDurationForPlayer(int32 PlayerControllerId, UGlobalEventHandler* GlobalEventHandler);
 };
 
 

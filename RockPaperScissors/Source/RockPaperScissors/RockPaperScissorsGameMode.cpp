@@ -24,6 +24,23 @@ void ARockPaperScissorsGameMode::StartPlay()
 	if (GameInstance && GameInstance->GlobalEventHandler)
 	{
 		GameInstance->GlobalEventHandler->OnPlayerHandSelected.AddDynamic(this, &ARockPaperScissorsGameMode::StartPlayerGameRound);
+		//TODO: Randomly determine at AI. Put duration in a constant. Broadcast to a player upon them joining a game.
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+			{
+				APlayerController* PlayerController = Cast<APlayerController>(*Iterator);
+				if (PlayerController)
+				{
+					int32 ControllerId = PlayerController->GetLocalPlayer()->GetControllerId();
+					UE_LOG(LogTemp, Warning, TEXT("Found Player %i"), ControllerId);
+					PlayerEnemyDurations[ControllerId] = RefreshNewEnemy();
+					EnemyDuration& CurrentEnemy = PlayerEnemyDurations[ControllerId];
+					GameInstance->GlobalEventHandler->OnEnemyAiChange.Broadcast(ControllerId, CurrentEnemy.RemainingHands, CurrentEnemy.Enemy->GetName());
+				}
+			}
+		}
 	}
 
 	RandomGenerator.GenerateNewSeed();
@@ -41,35 +58,16 @@ void ARockPaperScissorsGameMode::StartPlayerGameRound(
 	{
 		//TODO: Add a delay before sending results. Simulate server lag.
 
-		//TODO: Have distinct AIs. Switch AI every few games. Let players know of AI switch.
-
-		IEnemy* Enemy = SelectEnemy();
-		const EWeapon EEnemyWeapon = Enemy->SelectWeapon();
+		EnemyDuration& CurrentEnemy = PlayerEnemyDurations[PlayerControllerId];
+		const EWeapon EEnemyWeapon = CurrentEnemy.Enemy->SelectWeapon();
 		const EGameResult EResult = GetPlayerGameResult(EPlayerWeapon, EEnemyWeapon);
-		Enemy->ProcessGameResult(
-			PlayerControllerId,
-			EPlayerWeapon,
-			EEnemyWeapon,
-			EResult);
+		CurrentEnemy.Enemy->ProcessGameResult(PlayerControllerId, EPlayerWeapon, EEnemyWeapon, EResult);
 
-		int32 MoneyChange = 0;
-		switch (EResult)
-		{
-		case EGameResult::VE_Loss :
-			MoneyChange = -Bet;
-			break;
-
-		case EGameResult::VE_Win :
-			MoneyChange = Bet;
-			break;
-
-		case EGameResult::VE_Draw : 
-		default :
-			MoneyChange = 0;
-		}
-		const int32 NewMoney = Money + MoneyChange;
+		const int32 NewMoney = GetNewPlayerMoney(Money, Bet, EResult);
 
 		GameInstance->GlobalEventHandler->OnGameResult.Broadcast(PlayerControllerId, GamesPlayedCount, EResult, NewMoney, EEnemyWeapon);
+
+		DecreaseEnemyDurationForPlayer(PlayerControllerId, GameInstance->GlobalEventHandler);
 	}
 }
 
@@ -85,7 +83,14 @@ IEnemy* ARockPaperScissorsGameMode::SelectEnemy() const
 	return Enemy;
 }
 
-EGameResult ARockPaperScissorsGameMode::GetPlayerGameResult(EWeapon EPlayerWeapon, EWeapon EEnemyWeapon) const
+ARockPaperScissorsGameMode::EnemyDuration ARockPaperScissorsGameMode::RefreshNewEnemy() const
+{
+	IEnemy* Enemy = SelectEnemy();
+	EnemyDuration RefreshedEnemy = { Enemy, ENEMY_HANDS_BEFORE_CHANGE };
+	return RefreshedEnemy;
+}
+
+EGameResult ARockPaperScissorsGameMode::GetPlayerGameResult(const EWeapon EPlayerWeapon, const EWeapon EEnemyWeapon) const
 {
 	//TODO: Reduce this check down to operator overload checks
 	EGameResult EResult = EGameResult::VE_Loss;
@@ -103,4 +108,38 @@ EGameResult ARockPaperScissorsGameMode::GetPlayerGameResult(EWeapon EPlayerWeapo
 	}
 
 	return EResult;
+}
+
+int32 ARockPaperScissorsGameMode::GetNewPlayerMoney(int32 Money, int32 Bet, EGameResult EResult)
+{
+	int32 MoneyChange = 0;
+	switch (EResult)
+	{
+	case EGameResult::VE_Loss:
+		MoneyChange = -Bet;
+		break;
+
+	case EGameResult::VE_Win:
+		MoneyChange = Bet;
+		break;
+
+	case EGameResult::VE_Draw:
+	default:
+		MoneyChange = 0;
+	}
+	const int32 NewMoney = Money + MoneyChange;
+	return NewMoney;
+}
+
+void ARockPaperScissorsGameMode::DecreaseEnemyDurationForPlayer(int32 PlayerControllerId, UGlobalEventHandler* GlobalEventHandler)
+{
+	EnemyDuration& CurrentEnemy = PlayerEnemyDurations[PlayerControllerId];
+	CurrentEnemy.RemainingHands--;
+	if (CurrentEnemy.RemainingHands <= 0)
+	{
+		PlayerEnemyDurations[PlayerControllerId] = RefreshNewEnemy();
+		CurrentEnemy = PlayerEnemyDurations[PlayerControllerId];
+		URockPaperScissorsGameInstance* GameInstance = Cast<URockPaperScissorsGameInstance>(GetGameInstance());
+		GlobalEventHandler->OnEnemyAiChange.Broadcast(PlayerControllerId, CurrentEnemy.RemainingHands, CurrentEnemy.Enemy->GetName());
+	}
 }
