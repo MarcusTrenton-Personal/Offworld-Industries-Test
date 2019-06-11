@@ -2,14 +2,11 @@
 
 #include "RockPaperScissorsGameMode.h"
 #include "RockPaperScissorsPlayerController.h"
-#include "RockPaperScissorsPawn.h"
 #include "RockPaperScissorsPlayerState.h"
 #include "RockPaperScissorsGameInstance.h"
 
 ARockPaperScissorsGameMode::ARockPaperScissorsGameMode()
 {
-	// no pawn by default
-	DefaultPawnClass = ARockPaperScissorsPawn::StaticClass();
 	// use our own player controller class
 	PlayerControllerClass = ARockPaperScissorsPlayerController::StaticClass();
 	
