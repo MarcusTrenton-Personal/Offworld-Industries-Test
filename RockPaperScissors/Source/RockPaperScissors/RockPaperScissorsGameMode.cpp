@@ -17,6 +17,8 @@ void ARockPaperScissorsGameMode::StartPlay()
 {
 	Super::StartPlay();
 
+	RandomGenerator.GenerateNewSeed();
+
 	URockPaperScissorsGameInstance* GameInstance = Cast<URockPaperScissorsGameInstance>(GetGameInstance());
 	if (GameInstance && GameInstance->GlobalEventHandler)
 	{
@@ -39,8 +41,6 @@ void ARockPaperScissorsGameMode::StartPlay()
 			}
 		}
 	}
-
-	RandomGenerator.GenerateNewSeed();
 }
 
 void ARockPaperScissorsGameMode::StartPlayerGameRound(
